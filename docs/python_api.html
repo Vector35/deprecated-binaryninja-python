@@ -1,0 +1,155 @@
+
+<html><head><title>Binary Ninja Python Console</title></head>
+<body>
+<h1>Python console API</h1>
+<h2>Global objects</h2>
+<ul>
+<li><pre>data</pre>
+	<p>Raw binary representation of the active file.  This object can be accessed or modified using standard
+	Python <code>[]</code> operator (slices are supported).  See below for a description of the methods
+	supported by the data object.</p>
+</li>
+<li><pre>exe</pre>
+	<p>Like the <code>data</code> object, but instead represents the in memory view of an executable.  If the
+	file is not an executable, this object is the same as <code>data</code>.  This object can also be
+	accessed or modified using the standard Python <code>[]</code> operator.  See below for a description
+	of the methods supported by the data object.</p>
+</li>
+<li><pre>view</pre>
+	<p>Active view container object.  Most functionality is exposed by the APIs listed below.</p>
+</li>
+</ul>
+<h2>Data class methods</h2>
+<ul>
+<li><pre>data.read(address, size)</pre>
+	<p>Reads the given number of bytes at the given address, and returns the result as a string object.</p>
+</li>
+<li><pre>data.write(address, value)</pre>
+	<p>Writes the given value at the given address.  The given value should be a string object containing the
+	data to be written.  The write is an in-place overwrite that is the same length as the string object given.
+	The function returns the number of bytes written.</p>
+</li>
+<li><pre>data.insert(address, value)</pre>
+	<p>Inserts the given value at the given address.  The existing contents at the given address will be moved
+	to be directly after the inserted data.  The given value should be a string object containing the data to
+	be written.  Some data types may not support insertion, and will return zero from this function.  The
+	function returns the number of bytes inserted.</p>
+</li>
+<li><pre>data.remove(address, size)</pre>
+	<p>Removes the given number of bytes at the given address.  Some data types may not support removal of
+	bytes, and will return zero from this function.  The function returns the number of bytes removed.</p>
+</li>
+<li><pre>data.add_callback(object)</pre>
+	<p>Registers an object to receive callbacks when this data object is updated.  The following methods will
+	be invoked when the data is updated:</p>
+	<ul>
+		<li><code>callback.notify_data_write(data, address, value)</code>: Data was written with <code>data.write</code>.</li>
+		<li><code>callback.notify_data_insert(data, address, value)</code>: Data was inserted with <code>data.insert</code>.</li>
+		<li><code>callback.notify_data_remove(data, address, size)</code>: Data was removed with <code>data.remove</code>.</li>
+	</ul>
+</li>
+<li><pre>data.remove_callback(object)</pre>
+	<p>Unregisters an object that was receiving callbacks.</p>
+</li>
+<li><pre>data.save(filename)</pre>
+	<p>Saves the current file contents to disk with the given filename.</p>
+</li>
+<li><pre>data.start()</pre>
+	<p>Gets the starting address of the data.  For raw data, this will be zero.  For executables, this will be
+	the base address of the module.</p>
+</li>
+<li><pre>data.is_modified()</pre>
+	<p>Determines if the data has been modified since the last time it was written to disk.</p>
+</li>
+<li><pre>data.find(regex, address)</pre>
+	<p>Find the first occurence of the given regular expression starting at the given address.  Returns the address
+	of the first match.</p>
+</li>
+<li><pre>data.architecture()</pre>
+	<p>Returns the target CPU architecture of the file.  For raw data, this will default to 32-bit X86.</p>
+</li>
+<li><pre>data.entry()</pre>
+	<p>Gets the entry point of an executable.  This method will not exist on raw data objects.</p>
+</li>
+</ul>
+<h2>View functions</h2>
+<ul>
+<li><pre>current_view()</pre>
+	<p>Get the currently active view.</p>
+</li>
+<li><pre>change_view(view_type)</pre>
+	<p>Changes the current view to the type passed.  The type should be the class object of the desired view
+	type (for example, <code>DisassemblerView.DisassemblerView</code>).
+</li>
+<li><pre>navigate(action_type, address)</pre>
+	<p>Navigates to the given address with the given action type string.  The following action types are
+	currently defined in the default install:</p>
+	<ul>
+		<li><code>disassembler</code>: Navigate to address in disassembly view.</li>
+		<li><code>make_proc</code>: Make new function at address in disassembly view.</li>
+		<li><code>hex</code>: Navigate to address in raw hex view.</li>
+		<li><code>exe</code>: Navigate to address in executable hex view.</li>
+	</ul>
+</li>
+<li><pre>create_file(data)</pre>
+	<p>Creates a new unnamed file with the given contents.  The initial view type is chosen based on the content in the same
+	manner as opening a file through the user interface.</p>
+</li>
+</ul>
+<h2>Cursor and selection functions</h2>
+<ul>
+<li><pre>cursor()</pre>
+	<p>Gets the address of the current cursor position.</p>
+</li>
+<li><pre>set_cursor(pos)</pre>
+	<p>Sets the cursor position to the given address.  After this function call there will be no active selection.</p>
+</li>
+<li><pre>selection_range()</pre>
+	<p>Gets the address range of the current selection as a tuple.  The first element is the start of the selection and
+	the second element is the end of the selection.  If there is no selection, the function returns the current cursor
+	position in both of the elements.  The second element minus the first element is the length of the selection.</p>
+</li>
+<li><pre>set_selection_range(start, end)</pre>
+	<p>Sets the current selection to the range given.</p>
+</li>
+<li><pre>selection()</pre>
+	<p>Returns the currently selected bytes as a string object.  If there is no selection, this function returns the
+	empty string.</p>
+</li>
+<li><pre>replace_selection(value)</pre>
+	<p>Replaces the selected bytes with the given value.  The value should be a string object containing the new data.
+	If there is no active selection, this function will insert the bytes at the cursor position.</p>
+</li>
+<li><pre>write_at_cursor(value)</pre>
+	<p>Overwrites the bytes at the cursor position with the given value.  The value should be a string object
+	containing the new data.  This is an in-place overwrite and will perform a write of the same length as the
+	string object passed to this function.</p>
+</ul>
+<h2>Undo functions</h2>
+<ul>
+<li><pre>undo()</pre>
+	<p>Undo the last action(s) performed since the last undo buffer commit.</p>
+</li>
+<li><pre>redo()</pre>
+	<p>Redo the actions that were last undone.</p>
+</li>
+<li><pre>commit()</pre>
+	<p>Commit the actions pending in the undo buffer.  Each undo action will go to the previous buffer commit.  Undo
+	buffer commits should be performed after each logical action (i.e. replace, rebase image, create symbol, etc.).
+	If an undo buffer commit is not performed, undo will still function, but may cause more actions to be undone
+	than desired for a single step.</p>
+</li>
+</ul>
+<h2>Clipboard functions</h2>
+<ul>
+<li><pre>copy(value)</pre>
+	<p>Copies the given value to the clipboard.  The value should be a string object containing the data to be copied.<p>
+</li>
+<li><pre>paste()</pre>
+	<p>Paste the contents of the clipboard into the current view.  This performs the same function as the paste menu item.</p>
+</li>
+<li><pre>clipboard()</pre>
+	<p>Get the current clipboard contents as a string object.</p>
+</li>
+</ul>
+</body></html>
