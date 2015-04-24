@@ -18,9 +18,11 @@ You can start Binary Ninja by running `binja.py` in the Python interpreter.
 
 * Install the latest [Python 2.7](https://www.python.org/downloads/).
 * In a command-prompt, run:
+```
     cd \Python27\Scripts
     pip install PySide
     easy_install http://www.voidspace.org.uk/downloads/pycrypto26/pycrypto-2.6.win32-py2.7.exe
+```
 * Install [SourceTree](http://www.sourcetreeapp.com/download/) or [GitHub for Windows](https://windows.github.com/)
 * Clone `https://github.com/Vector35/binaryninja-python` to a local folder using whichever tool you installed.
 * Run `binja.py` from the directory you cloned the source code into
