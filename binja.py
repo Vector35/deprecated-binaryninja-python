@@ -359,7 +359,7 @@ class MainWindow(QMainWindow):
 				url = NSURL.URLWithString_(i.toString()).path()
 				self.open_name(str(url))
 			else:
-				if (i.isLocalFile()):
+				if (not i.isLocalFile()):
 					return
 				self.open_name(i.toLocalFile())
 		event.accept()
