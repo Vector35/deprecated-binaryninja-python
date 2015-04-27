@@ -361,7 +361,7 @@ class MainWindow(QMainWindow):
 			else:
 				if (i.isLocalFile()):
 					return
-				self.open_name(i.toLocalFile()):
+				self.open_name(i.toLocalFile())
 		event.accept()
 
 	def new(self):
