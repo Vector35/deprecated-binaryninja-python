@@ -264,6 +264,8 @@ class MainWindow(QMainWindow):
 
 		self.setCentralWidget(self.splitter)
 
+		self.setAcceptDrops(True)
+
 		self.status = QStatusBar(self)
 		self.status_text = QLabel(self)
 		self.status_text.setFont(getMonospaceFont())
@@ -342,6 +344,26 @@ class MainWindow(QMainWindow):
 	def create_tab_from_data(self, data):
 		self.create_tab(BinaryData(data), "")
 
+	def dragEnterEvent(self, event):
+		if event.mimeData().hasFormat("text/uri-list"):
+			event.acceptProposedAction()
+
+	def dropEvent(self, event):
+		for i in event.mimeData().urls():
+			if (sys.platform=="darwin" and (i.toLocalFile().find('/.file/id=') == 0)):
+				try:
+					from Foundation import NSURL
+				except ImportError:
+					sys.path.append('/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC')
+					from Foundation import NSURL
+				url = NSURL.URLWithString_(i.toString()).path()
+				self.open_name(str(url))
+			else:
+				if (i.isLocalFile()):
+					return
+				self.open_name(i.toLocalFile()):
+		event.accept()
+
 	def new(self):
 		self.create_tab(BinaryData(), "")
 
@@ -370,6 +392,11 @@ class MainWindow(QMainWindow):
 		if len(name[0]) != 0:
 			data = BinaryFile(name[0])
 			self.create_tab(data, name[0])
+
+	def open_name(self, name):
+		if len(name) != 0:
+			data = BinaryFile(name)
+			self.create_tab(data, name)
 
 	def save_tab(self, index):
 		if self.focus_tab.widget(index).isNewFileName() and self.focus_tab.widget(index).save(self.focus_tab.widget(index).filename):
