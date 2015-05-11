@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from BinaryData import *
-from Struct import *
+from Structure import *
 from HexEditor import *
 from View import *
 
@@ -38,7 +38,7 @@ class PEFile(BinaryAccessor):
 			return
 
 		try:
-			self.tree = Struct(self.data)
+			self.tree = Structure(self.data)
 			self.mz = self.tree.struct("MZ header", "mz")
 			self.mz.uint16("magic")
 			self.mz.uint16("lastsize")

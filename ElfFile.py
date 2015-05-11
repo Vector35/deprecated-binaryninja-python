@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from BinaryData import *
-from Struct import *
+from Structure import *
 from HexEditor import *
 from View import *
 
@@ -30,7 +30,7 @@ class ElfFile(BinaryAccessor):
 			return
 
 		try:
-			self.tree = Struct(self.data)
+			self.tree = Structure(self.data)
 			self.header = self.tree.struct("ELF header", "header")
 			self.header.struct("ELF identification", "ident")
 
