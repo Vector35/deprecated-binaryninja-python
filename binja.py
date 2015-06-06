@@ -1022,9 +1022,9 @@ class MainWindow(QMainWindow):
 
 	def shell(self):
 		if sys.platform == 'darwin':
-			data = TerminalData(["/bin/bash", "-i", "-l"], True)
+			data = TerminalData([os.environ.get('SHELL', '/bin/bash'), "-i", "-l"], True)
 		else:
-			data = TerminalData(["/bin/bash", "-i"], True)
+			data = TerminalData([os.environ.get('SHELL', '/bin/bash'), "-i"], True)
 		frame = ViewFrame(TerminalView, data, "Terminal", [TerminalView])
 		frame.allow_title_change = True
 		frame.custom_tab_name = "Terminal"
