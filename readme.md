@@ -1,5 +1,5 @@
-# Binary Ninja
-This is the Binary Ninja prototype, written in Python. See [binary.ninja](http://binary.ninja) for news and updates about Binary Ninja.
+# Binary Ninja (OBSOLETE PYTHON PROTOTYPE)
+This is the Binary Ninja prototype, written in Python. See [binary.ninja](https://binary.ninja) for information about the current version.
 
 This source code is released under the [GPLv2 license](https://www.gnu.org/licenses/gpl-2.0.html). The individual disassembler libraries (which include `X86.py`, `PPC.py`, and `ARM.py`) are released under the [MIT license](http://opensource.org/licenses/MIT).
 
